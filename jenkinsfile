@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'Slave' }
+    agent any
     stages {
         stage('Checkout Code') {
             steps {
@@ -12,18 +12,22 @@ pipeline {
                 ])
             }
         }
-        stage('Build') {
-            steps {
-                sh '''
-                mvn clean install
-                '''
-            }
-        }
-        stage('Test') {
-            steps {
-                sh '''
-                mvn test
-                '''
+        stage('Build and Test in Parallel') {
+            parallel {
+                stage('Build') {
+                    steps {
+                        sh '''
+                        mvn clean install
+                        '''
+                    }
+                }
+                stage('Test') {
+                    steps {
+                        sh '''
+                        mvn test
+                        '''
+                    }
+                }
             }
         }
         stage('Deploy to Artifactory') {
