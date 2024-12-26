@@ -1,25 +1,23 @@
 pipeline {
-agent any
-stages {"build"} {
-steps {
-sh ...
-echo "build stage"
-...
-}
-}
-stages {"deploy"} {
-steps {
-sh ...
-echo "deploy stage"
-...
-}
-}
-stages {"test"} {
-steps {
-sh ...
-echo "test stage"
-...
-}
-}
-}
+    agent any
+    stages {
+        stage("Build") {
+            steps {
+                echo "Build stage"
+                sh "your-build-command-here"
+            }
+        }
+        stage("Deploy") {
+            steps {
+                echo "Deploy stage"
+                sh "your-deploy-command-here"
+            }
+        }
+        stage("Test") {
+            steps {
+                echo "Test stage"
+                sh "your-test-command-here"
+            }
+        }
+    }
 }
