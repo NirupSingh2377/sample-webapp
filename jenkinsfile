@@ -43,9 +43,9 @@ pipeline {
                 sh "docker build -t ${ECR_REPO} ."
             }
         }
-        stage('Build Tag') {
+         stage('Tag Docker Image') {
             steps {
-                docker tag ${ECR_REPO} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                sh "docker tag ${IMAGE_NAME} ${ECR_IMAGE}"
             }
         }
         stage('Push to AWS ECR') {
