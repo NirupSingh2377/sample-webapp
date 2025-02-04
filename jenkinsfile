@@ -12,6 +12,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+sudo yum install -y aws-cli docker
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker jenkins
+sudo systemctl restart jenkins
+sudo reboot
+
                 git branch: 'main', url: 'https://github.com/NirupSingh2377/sample-webapp.git'
             }
         }
