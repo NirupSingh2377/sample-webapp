@@ -1,9 +1,11 @@
+@Library('Jenkins-Shared-library@main') _
+
 pipeline {
     agent any
 
     environment {
-        // Access constants from the shared library
-        constants = constants()  // Fetch constants from the shared library
+        // Fetch constants from the shared library
+        constants = constants()
 
         AWS_ACCOUNT_ID = "${constants.AWS_ACCOUNT_ID}"
         AWS_DEFAULT_REGION = "${constants.AWS_DEFAULT_REGION}"
@@ -39,48 +41,37 @@ pipeline {
 
         stage('Cloning Git Repository') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        url: GIT_REPO_URL,
-                        credentialsId: GIT_CREDENTIALS_ID
-                    ]]
-                ])
+                git branch: 'master', url: GIT_REPO_URL, credentialsId: GIT_CREDENTIALS_ID
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'  // Ensure the WAR file is built and available in the /target folder
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} ."
-                }
+                sh "docker build -t ${IMAGE_REPO_NAME}:${IMAGE_TAG} ."
             }
         }
 
         stage('Tag Docker Image') {
             steps {
-                script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${IMAGE_TAG}"
-                }
+                sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${IMAGE_TAG}"
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                script {
-                    echo "Running Docker container on port 8080"
-                    // Run the container in detached mode and map port 8080 to the host
-                    sh 'docker run -d -p 8080:8080 --name ${IMAGE_REPO_NAME}-container ${IMAGE_REPO_NAME}:latest'
-                }
+                sh "docker run -d -p 8080:8080 --name ${IMAGE_REPO_NAME}-container ${IMAGE_REPO_NAME}:latest"
             }
         }
 
         stage('Push Image to ECR') {
             steps {
-                script {
-                    sh "docker push ${REPOSITORY_URI}:${IMAGE_TAG}"
-                }
+                sh "docker push ${REPOSITORY_URI}:${IMAGE_TAG}"
             }
         }
     }
