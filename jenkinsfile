@@ -45,7 +45,7 @@ pipeline {
         }
         stage('Build Tag') {
             steps {
-                docker tag sample-webapp:latest 390403869878.dkr.ecr.us-east-1.amazonaws.com/sample-webapp:latest
+                docker tag sample-webapp 390403869878.dkr.ecr.us-east-1.amazonaws.com/sample-webapp:latest
             }
         }
         stage('Push to AWS ECR') {
