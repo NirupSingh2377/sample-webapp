@@ -2,6 +2,7 @@ pipeline {
     agent any
     
     environment {
+        PATH = "/usr/bin:$PATH"
         AWS_ACCOUNT_ID = '390403869878'
         AWS_REGION = 'us-east-1'
         ECR_REPO = 'sample-webapp'
@@ -12,7 +13,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-
                 git branch: 'main', url: 'https://github.com/NirupSingh2377/sample-webapp.git'
             }
         }
@@ -20,22 +20,21 @@ pipeline {
         stage('Login to AWS ECR') {
             steps {
                 script {
-                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+                    sh "/usr/bin/aws ecr get-login-password --region ${AWS_REGION} | /usr/bin/docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
                 }
             }
         }
         
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE} ."
+                sh "/usr/bin/docker build -t ${DOCKER_IMAGE} ."
             }
         }
         
         stage('Push to AWS ECR') {
             steps {
-                sh "docker push ${DOCKER_IMAGE}"
+                sh "/usr/bin/docker push ${DOCKER_IMAGE}"
             }
         }
     }
 }
-
