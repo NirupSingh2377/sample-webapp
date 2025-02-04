@@ -45,7 +45,7 @@ pipeline {
         }
         stage('Build Tag') {
             steps {
-                sh "docker tag sample-webapp:latest 390403869878.dkr.ecr.us-east-1.amazonaws.com/sample-webapp:latest"
+                docker tag ${ECR_REPO}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
             }
         }
         stage('Push to AWS ECR') {
