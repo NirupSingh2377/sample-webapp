@@ -7,6 +7,7 @@ pipeline {
         ECR_REPO = 'sample-webapp'
         IMAGE_TAG = 'latest'
         DOCKER_IMAGE = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}"
+        AWS_SECRET_ACCESS_KEY = "zjbBCntOx1rERuCMc8J3RPpvAFMxpY3xK5oP2cBG"
     }
     
     stages {
